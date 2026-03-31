@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصتي التعليمية | فضاء التلميذ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --p-color: #6c5ce7; --s-color: #00b894; --d-color: #d63031;
+            --w-color: #f1c40f; --bg: #f0f2f5; --wa-green: #25D366;
+        }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg); margin: 0; overflow-x: hidden; }
+
+        /* 1. شريط الإعلانات المتحرك */
+        .ticker-wrap {
+            width: 100%; background: var(--w-color); color: #2d3436;
+            padding: 8px 0; overflow: hidden; font-weight: bold; font-size: 14px;
+        }
+        .ticker { display: inline-block; white-space: nowrap; animation: scroll 20s linear infinite; }
+        @keyframes scroll { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+        /* 2. نافذة التسجيل والدخول الجذابة */
+        .auth-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, var(--p-color), #a29bfe);
+            display: flex; align-items: center; justify-content: center; z-index: 2000;
+        }
+        .auth-card {
+            background: white; width: 85%; max-width: 400px; border-radius: 25px;
+            padding: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); text-align: center;
+        }
+        .auth-card input, .auth-card select {
+            width: 100%; padding: 12px; margin: 8px 0; border-radius: 12px;
+            border: 1px solid #ddd; text-align: right; box-sizing: border-box;
+        }
+
+        /* 3. الهيدر وعداد الاشتراك */
+        .header { background: var(--p-color); color: white; padding: 25px 15px; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; text-align: center; }
+        .timer-box { background: rgba(255,255,255,0.2); padding: 10px; border-radius: 15px; margin-top: 10px; font-size: 14px; }
+
+        /* 4. قسم "الحصة المباشرة" */
+        .container { padding: 15px; }
+        .join-card {
+            background: white; border-radius: 20px; padding: 20px; text-align: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05); border: 2px solid var(--s-color);
+        }
+        .btn-join {
+            background: var(--s-color); color: white; border: none; width: 100%;
+            padding: 15px; border-radius: 15px; font-size: 18px; font-weight: bold; cursor: pointer;
+            margin-top: 10px; animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
+
+        /* 5. جدول المواعيد */
+        .card { background: white; border-radius: 20px; padding: 15px; margin-top: 15px; }
+        .table-time { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .table-time td { padding: 10px; border-bottom: 1px solid #eee; font-size: 14px; }
+
+        /* 6. وضع "انتهى الاشتراك" */
+        .expired-overlay {
+            position: fixed; top:0; left:0; width:100%; height:100%; background: white;
+            z-index: 3000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center;
+        }
+
+        .btn-wa { background: var(--wa-green); color: white; padding: 15px 30px; border-radius: 30px; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="auth-overlay" id="authBox">
+        <div class="auth-card">
+            <h2 id="authTitle">مرحباً بك مع أستاذك</h2>
+            <div id="fields">
+                <input type="text" placeholder="الاسم واللقب">
+                <input type="tel" placeholder="رقم الهاتف">
+                <input type="email" placeholder="البريد الإلكتروني">
+                <input type="password" placeholder="كلمة المرور">
+                <select>
+                    <option>اختر الفوج المناسب...</option>
+                    <option>فوج السبت 10:00</option>
+                    <option>فوج الأحد 14:00</option>
+                </select>
+                <div style="font-size:12px; margin:10px 0;">ارفع وصل الدفع (Image):</div>
+                <input type="file" accept="image/*">
+            </div>
+            <button class="btn-join" onclick="sendToWhatsApp()">إرسال وفتح حساب</button>
+            <p style="font-size:12px; color:var(--p-color); cursor:pointer;" onclick="toggleLogin()">لديك حساب؟ دخول</p>
+        </div>
+    </div>
+
+    <div class="expired-overlay" id="expiredScreen">
+        <i class="fas fa-lock-open fa-4x" style="color:var(--d-color); margin-bottom:20px;"></i>
+        <h2>عذراً، انتهت مدة اشتراكك!</h2>
+        <p>يرجى التواصل مع الأستاذ لتجديد الاشتراك ومواصلة الدراسة.</p>
+        <a href="https://wa.me/213561150865" class="btn-wa"><i class="fab fa-whatsapp"></i> تواصل مع الأستاذ الآن</a>
+    </div>
+
+    <div class="ticker-wrap">
+        <div class="ticker" id="profAnnouncement">
+            ⚠️ ملاحظة الأستاذ: الحصة ستبدأ بعد 10 دقائق، يرجى تجهيز الأدوات..
+        </div>
+    </div>
+
+    <div class="header">
+        <h3>لوحة تحكم التلميذ</h3>
+        <div class="timer-box">
+            <i class="fas fa-hourglass-end"></i> اشتراكك ينتهي بعد: <strong>5 أيام</strong>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="join-card">
+            <h4 style="margin:0; color:var(--s-color);"><i class="fas fa-circle" style="font-size:10px; color:red;"></i> الحصة مباشرة الآن!</h4>
+            <button class="btn-join" onclick="openLive()">
+                <i class="fas fa-video"></i> انضمام إلى الحصة
+            </button>
+        </div>
+
+        <div class="card">
+            <h4><i class="fas fa-calendar-alt"></i> جدول حصص فوجي</h4>
+            <table class="table-time">
+                <tr><td>السبت</td><td>10:00 - 12:00</td></tr>
+                <tr><td>الثلاثاء</td><td>18:00 - 20:00</td></tr>
+            </table>
+        </div>
+
+        <div class="card" style="border-right: 5px solid var(--p-color);">
+            <h4><i class="fas fa-chalkboard-teacher"></i> معلومات الأستاذ</h4>
+            <p style="margin:5px 0; font-size:14px;"><strong>الأستاذ:</strong> أحمد (رياضيات)</p>
+            <a href="#" style="font-size:13px; color:var(--p-color); text-decoration:none;"><i class="fab fa-facebook"></i> صفحة الأستاذ</a>
+        </div>
+
+        <button class="btn-join" style="background:#34495e; animation:none; font-size:14px;">
+            <i class="fas fa-mobile-alt"></i> تنزيل التطبيق على الهاتف
+        </button>
+    </div>
+
+    <script>
+        function toggleLogin() {
+            const title = document.getElementById('authTitle');
+            const fields = document.getElementById('fields');
+            if(title.innerText.includes("مرحباً")) {
+                title.innerText = "تسجيل الدخول";
+                fields.innerHTML = '<input type="email" placeholder="البريد الإلكتروني"><input type="password" placeholder="كلمة المرور">';
+            } else { location.reload(); }
+        }
+
+        function sendToWhatsApp() {
+            // منطق إرسال البيانات لواتساب الأستاذ
+            alert('تم إرسال معلوماتك لواتساب الأستاذ! حسابك الآن قيد الانتظار.');
+            document.getElementById('authBox').style.display = 'none';
+        }
+
+        function openLive() {
+            // نافذة الحصة المباشرة (ستحتوي على الشات والميكرو)
+            alert('يتم الآن فتح غرفة البث... جهز الميكروفون!');
+        }
+    </script>
+</body>
+</html>
