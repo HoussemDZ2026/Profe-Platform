@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>البث المباشر | Classroom</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    <style>
+        :root {
+            --dark: #1a1a2e; --primary: #6c5ce7; --danger: #e74c3c; --accent: #00b894;
+        }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: 'Cairo', sans-serif; background: var(--dark); }
+
+        /* 1. منطقة العرض الرئيسية (السبورة أو الكاميرا) */
+        .main-stream {
+            position: relative; width: 100%; height: 70vh; background: #fff;
+            display: flex; align-items: center; justify-content: center;
+        }
+        #canvas-container { width: 100%; height: 100%; position: absolute; top:0; left:0; }
+        canvas { border: none; }
+
+        /* 2. شريط أدوات الأستاذ (يظهر للأستاذ فقط) */
+        .prof-tools {
+            position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.7);
+            padding: 10px; border-radius: 15px; display: flex; gap: 10px; z-index: 100;
+        }
+        .tool-btn {
+            background: white; border: none; width: 40px; height: 40px; border-radius: 10px;
+            cursor: pointer; color: var(--dark); font-size: 18px; transition: 0.3s;
+        }
+        .tool-btn.active { background: var(--primary); color: white; }
+
+        /* 3. منطقة الدردشة (Chat) */
+        .chat-section {
+            height: 30vh; background: var(--dark); border-top: 1px solid #333;
+            display: flex; flex-direction: column;
+        }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 10px; color: white; font-size: 14px; }
+        .msg { margin-bottom: 8px; border-radius: 8px; padding: 5px 10px; background: rgba(255,255,255,0.1); width: fit-content; }
+        .msg b { color: var(--accent); margin-left: 5px; }
+
+        .chat-input-area { padding: 10px; display: flex; gap: 8px; background: #16213e; }
+        .chat-input-area input { flex: 1; padding: 10px; border-radius: 20px; border: none; outline: none; }
+        .btn-send { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; }
+
+        /* 4. أزرار التحكم العلوية */
+        .top-bar {
+            position: absolute; top: 10px; left: 10px; right: 10px;
+            display: flex; justify-content: space-between; align-items: center; z-index: 101;
+        }
+        .live-badge { background: var(--danger); color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.5; } }
+
+        .exit-btn { background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="live-badge"><i class="fas fa-circle"></i> مباشر</div>
+        <button class="exit-btn" onclick="history.back()">خروج <i class="fas fa-sign-out-alt"></i></button>
+    </div>
+
+    <div class="main-stream">
+        <div id="canvas-container">
+            <canvas id="whiteboard"></canvas>
+        </div>
+
+        <div class="prof-tools" id="profTools">
+            <button class="tool-btn active" title="قلم" onclick="setMode('pencil')"><i class="fas fa-pencil-alt"></i></button>
+            <button class="tool-btn" title="ممحاة" onclick="setMode('eraser')"><i class="fas fa-eraser"></i></button>
+            <button class="tool-btn" title="نص" onclick="addText()"><i class="fas fa-font"></i></button>
+            <button class="tool-btn" title="صورة" onclick="uploadImage()"><i class="fas fa-image"></i></button>
+            <button class="tool-btn" title="مسح الكل" onclick="clearCanvas()" style="color: var(--danger);"><i class="fas fa-trash"></i></button>
+            <button class="tool-btn" title="تسجيل" onclick="toggleRecord()" id="recBtn"><i class="fas fa-video"></i></button>
+        </div>
+    </div>
+
+    <div class="chat-section">
+        <div class="chat-messages" id="chatBox">
+            <div class="msg"><b>الأستاذ:</b> السلام عليكم، سنبدأ درس اليوم حول مبرهنة فيثاغورس.</div>
+            <div class="msg"><b>ياسين:</b> أستاذ هل يمكننا رؤية التمرين السابق؟</div>
+        </div>
+        <div class="chat-input-area">
+            <button class="btn-send" style="background: var(--accent);"><i class="fas fa-microphone"></i></button>
+            <input type="text" id="msgInput" placeholder="اكتب سؤالك هنا...">
+            <button class="btn-send" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // إعداد السبورة الذكية
+        const canvas = new fabric.Canvas('whiteboard', {
+            isDrawingMode: true,
+            width: window.innerWidth,
+            height: window.innerHeight * 0.7
+        });
+
+        canvas.freeDrawingBrush.color = '#000';
+        canvas.freeDrawingBrush.width = 3;
+
+        function setMode(mode) {
+            if (mode === 'pencil') {
+                canvas.isDrawingMode = true;
+                canvas.freeDrawingBrush.color = '#000';
+            } else if (mode === 'eraser') {
+                canvas.isDrawingMode = true;
+                canvas.freeDrawingBrush.color = '#fff'; // الممحاة هي قلم أبيض في السبورة البيضاء
+                canvas.freeDrawingBrush.width = 20;
+            }
+        }
+
+        function clearCanvas() {
+            if(confirm('هل تريد مسح السبورة بالكامل؟')) canvas.clear();
+        }
+
+        function addText() {
+            canvas.isDrawingMode = false;
+            const text = new fabric.IText('اكتب هنا...', { left: 100, top: 100, fontFamily: 'Cairo' });
+            canvas.add(text);
+        }
+
+        function sendMsg() {
+            const input = document.getElementById('msgInput');
+            if(input.value.trim() !== "") {
+                const chatBox = document.getElementById('chatBox');
+                chatBox.innerHTML += `<div class="msg"><b>أنا:</b> ${input.value}</div>`;
+                input.value = "";
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+
+        // التعامل مع حجم الشاشة عند التدوير
+        window.addEventListener('resize', () => {
+            canvas.setWidth(window.innerWidth);
+            canvas.setHeight(window.innerHeight * 0.7);
+        });
+
+        // ميزة التسجيل (سيتم ربطها بـ MediaRecorder لاحقاً)
+        function toggleRecord() {
+            const btn = document.getElementById('recBtn');
+            btn.style.color = btn.style.color === 'red' ? 'black' : 'red';
+            alert(btn.style.color === 'red' ? 'بدأ تسجيل الحصة...' : 'تم إيقاف التسجيل وحفظه في هاتفك.');
+        }
+    </script>
+</body>
+</html>
