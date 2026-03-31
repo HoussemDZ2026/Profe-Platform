@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Future Set AI | مستقبل التعليم الرقمي</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #00b894;
+            --dark: #2d3436;
+            --accent: #f1c40f;
+        }
+        body {
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            background: #fdfdfd;
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #6c5ce7 0%, #4834d4 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            padding: 20px;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            opacity: 0.95;
+        }
+
+        /* بوابات الدخول الرئيسية */
+        .gateway-container {
+            display: flex;
+            gap: 25px;
+            width: 100%;
+            max-width: 900px;
+            flex-wrap: wrap;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        /* بوابة الأستاذ المتميزة */
+        .prof-gateway {
+            background: white;
+            color: var(--dark);
+            padding: 40px 30px;
+            border-radius: 30px;
+            width: 320px;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            border: 3px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .prof-gateway:hover {
+            transform: translateY(-15px) scale(1.02);
+            border-color: var(--accent);
+        }
+
+        .prof-gateway::before {
+            content: "موصى به";
+            position: absolute;
+            top: 15px;
+            left: -30px;
+            background: var(--accent);
+            color: var(--dark);
+            padding: 5px 40px;
+            transform: rotate(-45deg);
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .prof-gateway i {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .prof-gateway h3 {
+            font-size: 1.8rem;
+            margin: 10px 0;
+            color: var(--primary);
+        }
+
+        /* بوابة التلميذ */
+        .student-gateway {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 40px 30px;
+            border-radius: 30px;
+            width: 320px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .student-gateway:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-5px);
+        }
+
+        .student-gateway i {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Footer */
+        footer {
+            padding: 30px;
+            text-align: center;
+            background: #fff;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .contact-admin {
+            display: inline-block;
+            margin-top: 10px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.2rem; }
+            .prof-gateway, .student-gateway { width: 100%; max-width: 300px; }
+        }
+    </style>
+</head>
+<body>
+
+    <section class="hero">
+        <h1>Future Set AI</h1>
+        <p>أول منصة جزائرية ذكية تمنحك القدرة على بناء أكاديميتك التعليمية الخاصة في ثوانٍ. ابدأ البث، أدر طلابك، وحقق النجاح.</p>
+        
+        <div class="gateway-container">
+            <a href="prof-dashboard.html" class="prof-gateway">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <h3>بوابة الأستاذ</h3>
+                <p>أنشئ منصتك الآن، ابدأ البث المباشر، وتحكم في اشتراكات تلاميذك بكل سهولة.</p>
+                <div style="margin-top:20px; font-weight:bold; color:var(--secondary);">
+                    ابدأ مجاناً <i class="fas fa-arrow-left"></i>
+                </div>
+            </a>
+
+            <a href="student-dashboard.html" class="student-gateway">
+                <i class="fas fa-user-graduate"></i>
+                <h3>بوابة التلميذ</h3>
+                <p>التحق بحصص أستاذك المفضلة، تفاعل مباشرة، وشاهد الدروس المسجلة في أي وقت.</p>
+                <div style="margin-top:20px; font-weight:bold;">
+                    دخول الطلاب <i class="fas fa-arrow-left"></i>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <footer>
+        <p>جميع الحقوق محفوظة &copy; 2026 - Future Set AI</p>
+        <p>للتعاون البرمجي أو الدعم الفني:</p>
+        <a href="https://wa.me/213561150865" class="contact-admin">
+            <i class="fab fa-whatsapp"></i> التواصل مع الإدارة: 0561150865
+        </a>
+    </footer>
+
+</body>
+</html>
