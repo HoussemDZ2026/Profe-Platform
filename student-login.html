@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة التلميذ | Future Set</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #00b894;
+            --accent: #f1c40f;
+            --dark: #2d3436;
+        }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            width: 100%;
+            max-width: 420px;
+            border-radius: 30px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
+        }
+
+        .login-container i.main-icon {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        h2 { color: var(--dark); margin-bottom: 10px; font-weight: 900; }
+        p { color: #636e72; font-size: 14px; margin-bottom: 30px; }
+
+        .input-group {
+            margin-bottom: 15px;
+            text-align: right;
+        }
+
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 13px; color: var(--dark); }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 12px;
+            border: 2px solid #eee;
+            outline: none;
+            transition: 0.3s;
+            font-family: 'Cairo';
+            box-sizing: border-box;
+        }
+
+        input:focus { border-color: var(--primary); }
+
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 15px;
+            background: var(--primary);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3); }
+
+        .switch-auth {
+            margin-top: 20px;
+            font-size: 13px;
+            color: #636e72;
+        }
+
+        .switch-auth span {
+            color: var(--primary);
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* تنسيق رفع الوصل */
+        .file-upload {
+            background: #f8f9fa;
+            border: 2px dashed #ddd;
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .file-upload i { color: var(--secondary); margin-bottom: 5px; }
+
+        .footer-note { font-size: 11px; color: #b2bec3; margin-top: 30px; }
+    </style>
+</head>
+<body>
+
+    <div class="login-container" id="authCard">
+        <i class="fas fa-user-graduate main-icon"></i>
+        <h2 id="formTitle">دخول التلاميذ</h2>
+        <p id="formDesc">أهلاً بك مجدداً! أدخل بياناتك للمتابعة.</p>
+
+        <div id="loginForm">
+            <div class="input-group">
+                <label>البريد الإلكتروني</label>
+                <input type="email" placeholder="example@mail.com">
+            </div>
+            <div class="input-group">
+                <label>كلمة المرور</label>
+                <input type="password" placeholder="********">
+            </div>
+            <button class="btn-submit" onclick="location.href='student-dashboard.html'">دخول إلى حسابي</button>
+            <div class="switch-auth">
+                ليس لديك حساب؟ <span onclick="showRegister()">فتح حساب جديد</span>
+            </div>
+        </div>
+
+        <div id="registerForm" style="display: none;">
+            <div class="input-group">
+                <label>الاسم واللقب</label>
+                <input type="text" placeholder="اسمك الكامل">
+            </div>
+            <div class="input-group">
+                <label>رقم الهاتف</label>
+                <input type="tel" placeholder="05/06/07XXXXXXXX">
+            </div>
+            <div class="input-group">
+                <label>اختر الفوج</label>
+                <select>
+                    <option>فوج السبت 10:00</option>
+                    <option>فوج الأحد 14:00</option>
+                </select>
+            </div>
+            <div class="file-upload" onclick="document.getElementById('receipt').click()">
+                <i class="fas fa-cloud-upload-alt fa-2x"></i>
+                <div style="font-size: 12px;">ارفع صورة وصل الدفع (CCP)</div>
+                <input type="file" id="receipt" style="display: none;" accept="image/*">
+            </div>
+            <button class="btn-submit" style="background: var(--secondary);" onclick="sendToProf()">إرسال وطلب تفعيل</button>
+            <div class="switch-auth">
+                لديك حساب بالفعل؟ <span onclick="showLogin()">تسجيل الدخول</span>
+            </div>
+        </div>
+
+        <div class="footer-note">Future Set AI &copy; 2026</div>
+    </div>
+
+    <script>
+        function showRegister() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+            document.getElementById('formTitle').innerText = 'حساب تلميذ جديد';
+            document.getElementById('formDesc').innerText = 'سجل بياناتك وارفع وصل الدفع للالتحاق بالفوج.';
+        }
+
+        function showLogin() {
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('formTitle').innerText = 'دخول التلاميذ';
+            document.getElementById('formDesc').innerText = 'أهلاً بك مجدداً! أدخل بياناتك للمتابعة.';
+        }
+
+        function sendToProf() {
+            // محاكاة إرسال البيانات لواتساب الأستاذ
+            const confirmMsg = confirm("سيتم إرسال بياناتك وصورة الوصل للأستاذ عبر واتساب للمراجعة. هل أنت موافق؟");
+            if(confirmMsg) {
+                alert("تم إرسال الطلب! حسابك الآن في وضع الانتظار.");
+                showLogin();
+            }
+        }
+    </script>
+
+</body>
+</html>
