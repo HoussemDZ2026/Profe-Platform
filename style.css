@@ -1,0 +1,190 @@
+/* 1. الإعدادات العامة والخطوط */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+
+:root {
+    /* لوحة الألوان الاحترافية */
+    --primary: #6c5ce7;    /* البنفسجي للذكاء الاصطناعي */
+    --secondary: #00b894;  /* الأخضر للنجاح والتفعيل */
+    --danger: #d63031;     /* الأحمر للتنبيهات والرفض */
+    --warning: #f1c40f;    /* الأصفر للإشعارات والاشتراك */
+    --dark: #2d3436;       /* الرمادي الغامق للنصوص */
+    --light: #f9f9f9;      /* الخلفيات الفاتحة */
+    --white: #ffffff;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    --radius: 20px;
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent; /* تحسين اللمس في الهواتف */
+}
+
+body {
+    font-family: 'Cairo', sans-serif;
+    background-color: var(--light);
+    color: var(--dark);
+    margin: 0;
+    line-height: 1.6;
+    direction: rtl;
+}
+
+/* 2. تنسيق البطاقات (Cards) - القاسم المشترك للمنصة */
+.card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(0,0,0,0.02);
+    transition: transform 0.3s ease;
+}
+
+.card:active {
+    transform: scale(0.98); /* تأثير الضغط على الهاتف */
+}
+
+/* 3. نظام الأزرار (Buttons) */
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 15px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cairo';
+}
+
+.btn-primary { background: var(--primary); color: var(--white); }
+.btn-secondary { background: var(--secondary); color: var(--white); }
+.btn-danger { background: var(--danger); color: var(--white); }
+.btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+
+.btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* 4. المدخلات (Inputs & Forms) */
+input, select, textarea {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 8px 0;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    font-family: 'Cairo';
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+input:focus {
+    border-color: var(--primary);
+}
+
+/* 5. الهيدر (Header Customization) */
+.header-main {
+    background: var(--primary);
+    color: var(--white);
+    padding: 30px 20px;
+    border-bottom-left-radius: 35px;
+    border-bottom-right-radius: 35px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(108, 92, 231, 0.2);
+}
+
+/* 6. نظام التنبيهات (Alerts) */
+.alert {
+    padding: 15px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+}
+
+.alert-warn { background: #fff9e6; border-right: 5px solid var(--warning); color: #856404; }
+.alert-danger { background: #fff5f5; border-right: 5px solid var(--danger); color: #721c24; }
+
+/* 7. شريط الإعلانات (Ticker) */
+.ticker-container {
+    background: var(--warning);
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 8px 0;
+}
+
+.ticker-text {
+    display: inline-block;
+    padding-right: 100%;
+    animation: ticker 25s linear infinite;
+    font-weight: bold;
+}
+
+@keyframes ticker {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(100%, 0, 0); }
+}
+
+/* 8. النوافذ المنبثقة (Modals) */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+}
+
+.modal-content {
+    background: var(--white);
+    width: 100%;
+    max-width: 450px;
+    border-radius: 30px;
+    padding: 30px;
+    position: relative;
+    animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* 9. تحسينات العرض المباشر (Live Stream Styles) */
+.live-stream-box {
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+}
+
+.live-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--danger);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* 10. التجاوب للأجهزة اللوحية والحواسيب */
+@media (min-width: 768px) {
+    .grid-dashboard {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+}
